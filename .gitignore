@@ -1,0 +1,12 @@
+log
+vendor
+.idea
+.composer
+tests/config/keys.php
+tests/storage
+tests/log
+tests/*.log
+path.watcher.test.dir/
+build
+src/OLD_*.php
+docs

@@ -1,0 +1,36 @@
+{
+	"name":              "dreamfactory/freezer",
+	"description":       "DreamFactory Freezer(tm)",
+	"homepage":          "https://www.dreamfactory.com/",
+	"keywords":          ["dsp", "dsp-utility", "utility", "storage", "persistent", "bluemix"],
+	"license":           ["Apache-2.0"],
+	"authors":           [
+		{
+			"name":  "Jerry Ablan",
+			"email": "jerryablan@dreamfactory.com",
+			"role":  "Ninja"
+		}
+	],
+	"require":           {
+		"php":         ">=5.4.6",
+		"kisma/kisma": "~0.2.51@stable"
+	},
+	"minimum-stability": "dev",
+	"require-dev":       {
+		"phpunit/phpunit":          "~3.7@stable",
+		"phpunit/phpunit-selenium": "@stable",
+		"phpunit/phpunit-story":    "@stable",
+		"phpunit/dbunit":           "@stable",
+		"phpunit/php-invoker":      "@stable"
+	},
+	"autoload":          {
+		"psr-4": {
+			"DreamFactory\\Tools\\Freezer": "src/"
+		}
+	},
+	"extra":             {
+		"branch-alias": {
+			"dev-develop": "1.0.x-dev"
+		}
+	}
+}
