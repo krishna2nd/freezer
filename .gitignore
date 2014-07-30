@@ -8,5 +8,4 @@ tests/log
 tests/*.log
 path.watcher.test.dir/
 build
-src/OLD_*.php
 docs

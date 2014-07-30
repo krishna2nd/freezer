@@ -18,14 +18,47 @@
  */
 namespace DreamFactory\Tools\Freezer;
 
-class Freezer
+use DreamFactory\Tools\Freezer\Commands\DefrostCommand;
+use DreamFactory\Tools\Freezer\Commands\FreezeCommand;
+use DreamFactory\Tools\Freezer\Commands\IcemakerCommand;
+use Symfony\Component\Console\Application;
+
+/**
+ * Freezes a directory
+ */
+class Freezer extends Application
 {
+    //*************************************************************************
+    //	Constants
+    //*************************************************************************
+
+    /**
+     * @type string
+     */
+    const VERSION = '1.0.0';
+
     //******************************************************************************
     //* Methods
     //******************************************************************************
 
-    public function __construct( $argc, $argv )
+    /**
+     * Constructor.
+     *
+     * @param string $name    The name of the application
+     * @param string $version The version of the application
+     *
+     * @api
+     */
+    public function __construct( $name = 'UNKNOWN', $version = 'UNKNOWN' )
     {
+        parent::__construct( 'DreamFactory Freezer', static::VERSION );
+
+        $this->add( new DefrostCommand() );
+        $this->add( new FreezeCommand() );
+        $this->add( new IcemakerCommand() );
+        
+//      $this->add( new DumpCommand() );
+//      $this->add( new CleanCommand() );
     }
 
 }

@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 /**
  * This file is part of the DreamFactory Freezer(tm)
@@ -20,5 +21,10 @@
 //* Main
 //******************************************************************************
 
-$_freezer = new Freezer($argc,$argv);
-$_freezer->freeze()
+use DreamFactory\Tools\Freezer\Freezer;
+
+//  Autoload
+require dirname( __DIR__ ) . '/vendor/autoload.php';
+
+$_app = new Freezer();
+$_app->run();
