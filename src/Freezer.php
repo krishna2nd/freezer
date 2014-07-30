@@ -18,6 +18,7 @@
  */
 namespace DreamFactory\Tools\Freezer;
 
+use DreamFactory\Tools\Freezer\Commands\CleanCommand;
 use DreamFactory\Tools\Freezer\Commands\DefrostCommand;
 use DreamFactory\Tools\Freezer\Commands\FreezeCommand;
 use DreamFactory\Tools\Freezer\Commands\IcemakerCommand;
@@ -53,12 +54,11 @@ class Freezer extends Application
     {
         parent::__construct( 'DreamFactory Freezer', static::VERSION );
 
+        $this->add( new CleanCommand() );
         $this->add( new DefrostCommand() );
         $this->add( new FreezeCommand() );
         $this->add( new IcemakerCommand() );
-        
 //      $this->add( new DumpCommand() );
-//      $this->add( new CleanCommand() );
     }
 
 }

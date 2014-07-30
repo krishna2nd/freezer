@@ -18,7 +18,6 @@
  */
 namespace DreamFactory\Tools\Freezer\Commands;
 
-use DreamFactory\Tools\Freezer\PathArchive;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,9 +25,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Defrosts a path
+ * Cleans up the database
  */
-class DefrostCommand extends Command
+class CleanCommand extends Command
 {
 
     protected function configure()
@@ -38,13 +37,13 @@ class DefrostCommand extends Command
         $_db = array(
             'host'     => 'localhost',
             'port'     => 3306,
-            'name'     => 'dreamfactory',
+            'name'  => 'dreamfactory',
             'user'     => 'dsp_user',
             'password' => 'dsp_user',
         );
 
-        $this->setName( 'defrost' )
-            ->setDescription( 'Defrosts a frozen directory back to its original state.' )
+        $this->setName( 'clean' )
+            ->setDescription( 'Cleans up the database' )
             ->setDefinition(
                 array(
                     new InputOption( 'path', 'a', InputOption::VALUE_REQUIRED, 'The path to freeze' ),
@@ -57,11 +56,12 @@ class DefrostCommand extends Command
             )
             ->setHelp(
                 <<<EOT
-                Defrosts a frozen directory back to its original state.
+                Cleans up the database
 
 Usage:
 
-<info>freezer defrost -a /path/to/freeze <env></info>
+<info>freezer clean <env></info>
+<info>freezer clean:all  <env></info>
 EOT
             );
     }
@@ -73,15 +73,6 @@ EOT
 
         $_path = $input->getOption( 'path' );
 
-        $_dsn = 'mysql:dbname=dreamfactory;host=127.0.0.1';
-        $_pdo = new \PDO( $_dsn, 'dsp_user', 'dsp_user' );
-
-        $output->writeln( '<header>Defrosting...</header>' );
-
-        $_store = new PathArchive( 'freezer', $_pdo );
-        $_store->restore( 'freezer', $_path );
-
-        $output->writeln( '<header>Defrosting complete</header>' );
-
+        $output->writeln( '<header>Cleaning...</header>' );
     }
 }

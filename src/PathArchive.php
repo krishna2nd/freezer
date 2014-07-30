@@ -276,24 +276,22 @@ MYSQL;
                 //  Dump a marker that we've backed up
                 if ( !$this->_saveStoreMarker( $_path, $_timestamp, $_checksum ) )
                 {
-                    echo
-                        'path_archive: error creating storage checksum file. No biggie, but you may be out of disk space.' .
-                        PHP_EOL;
+                    echo 'path_archive: error creating storage checksum file. No biggie, but you may be out of disk space.' . PHP_EOL;
                 }
 
                 echo 'path_archive: backup created: ' . $_checksum . '@' . $_timestamp . PHP_EOL;
             }
-
-            //  Remove temporary file
-            \unlink( $_zipName );
-
-            return true;
         }
         catch ( \Exception $_ex )
         {
             echo 'path_archive: exception storing backup data: ' . $_ex->getMessage() . PHP_EOL;
             throw $_ex;
         }
+
+        //  Remove temporary file
+        \unlink( $_zipName );
+
+        return true;
     }
 
     /**
@@ -422,8 +420,7 @@ MYSQL;
             'swagger',
         );
 
-        $_files =
-            FileSystem::glob( $path . DIRECTORY_SEPARATOR . '*.*', GlobFlags::GLOB_NODOTS | GlobFlags::GLOB_RECURSE );
+        $_files = FileSystem::glob( $path . DIRECTORY_SEPARATOR . '*.*', GlobFlags::GLOB_NODOTS | GlobFlags::GLOB_RECURSE );
 
         if ( empty( $_files ) )
         {
@@ -546,7 +543,7 @@ WHERE
     storage_id = :storage_id
 MYSQL;
 
-        if ( false === ( $_revisionId = Sql::scalar( $_sql, 0, array( ':storage_id' => $storageId ) ) ) )
+        if ( false === ( $_revisionId = Sql::scalar( $_sql, 0, array(':storage_id' => $storageId) ) ) )
         {
             throw new FreezerException(
                 'Database error during revision check: ' . print_r( $this->_pdo->errorInfo(), true )
@@ -570,7 +567,7 @@ MYSQL;
 
         if ( !file_exists( $_marker ) || false === ( $_data = file_get_contents( $_marker ) ) )
         {
-            return array( 'time_stamp' => 0, 'check_sum' => null );
+            return array('time_stamp' => 0, 'check_sum' => null);
         }
 
         return json_decode( $_data, true );

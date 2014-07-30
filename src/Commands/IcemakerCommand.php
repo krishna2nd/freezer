@@ -37,7 +37,7 @@ class IcemakerCommand extends Command
         $_db = array(
             'host'     => 'localhost',
             'port'     => 3306,
-            'db_name'  => 'dreamfactory',
+            'name'  => 'dreamfactory',
             'user'     => 'dsp_user',
             'password' => 'dsp_user',
         );
@@ -49,7 +49,7 @@ class IcemakerCommand extends Command
                     new InputOption( 'path', 'a', InputOption::VALUE_REQUIRED, 'The path to freeze' ),
                     new InputOption( 'host', 's', InputOption::VALUE_OPTIONAL, 'The database host name', $_db['host'] ),
                     new InputOption( 'port', null, InputOption::VALUE_OPTIONAL, 'The database port', $_db['port'] ),
-                    new InputOption( 'db_name', 'n', InputOption::VALUE_OPTIONAL, 'The database name', $_db['name'] ),
+                    new InputOption( 'name', 'd', InputOption::VALUE_OPTIONAL, 'The database name', $_db['name'] ),
                     new InputOption( 'user', 'u', InputOption::VALUE_OPTIONAL, 'The database user name', $_db['user'] ),
                     new InputOption( 'password', 'p', InputOption::VALUE_OPTIONAL, 'The database password', $_db['password'] ),
                 )

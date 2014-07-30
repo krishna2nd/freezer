@@ -18,6 +18,7 @@
  */
 namespace DreamFactory\Tools\Freezer\Commands;
 
+use DreamFactory\Tools\Freezer\PathArchive;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Input\InputInterface;
@@ -49,7 +50,7 @@ class FreezeCommand extends Command
                     new InputOption( 'path', 'a', InputOption::VALUE_REQUIRED, 'The path to freeze' ),
                     new InputOption( 'host', 's', InputOption::VALUE_OPTIONAL, 'The database host name', $_db['host'] ),
                     new InputOption( 'port', null, InputOption::VALUE_OPTIONAL, 'The database port', $_db['port'] ),
-                    new InputOption( 'name', 'n', InputOption::VALUE_OPTIONAL, 'The database name', $_db['name'] ),
+                    new InputOption( 'name', 'd', InputOption::VALUE_OPTIONAL, 'The database name', $_db['name'] ),
                     new InputOption( 'user', 'u', InputOption::VALUE_OPTIONAL, 'The database user name', $_db['user'] ),
                     new InputOption( 'password', 'p', InputOption::VALUE_OPTIONAL, 'The database password', $_db['password'] ),
                 )
@@ -73,6 +74,13 @@ EOT
         $_path = $input->getOption( 'path' );
 
         $output->writeln( '<header>Freezing: ' . $_path . '</header>' );
+
+        $_dsn = 'mysql:dbname=dreamfactory;host=127.0.0.1';
+        $_pdo = new \PDO( $_dsn, 'dsp_user', 'dsp_user' );
+
+        $_store = new PathArchive( 'freezer', $_pdo );
+        $_store->backup( 'freezer', $_path );
+
         $output->writeln( '<header>Freezing complete</header>' );
     }
 }
