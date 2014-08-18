@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "65caa6f47d7e449ca1364a27d67ef421",
+    "hash": "cf6115374631e4b1e92a099969f3d785",
     "packages": [
         {
             "name": "doctrine/cache",
@@ -82,16 +82,16 @@
         },
         {
             "name": "kisma/kisma",
-            "version": "0.2.55",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lucifurious/kisma.git",
-                "reference": "bb1842ca84b64610cab73354f9a2e01002081192"
+                "reference": "df893c432e3b4da5af6fb8959c797619e3dff952"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lucifurious/kisma/zipball/bb1842ca84b64610cab73354f9a2e01002081192",
-                "reference": "bb1842ca84b64610cab73354f9a2e01002081192",
+                "url": "https://api.github.com/repos/lucifurious/kisma/zipball/df893c432e3b4da5af6fb8959c797619e3dff952",
+                "reference": "df893c432e3b4da5af6fb8959c797619e3dff952",
                 "shasum": ""
             },
             "require": {
@@ -136,7 +136,7 @@
                 "php5",
                 "utility"
             ],
-            "time": "2014-08-14 08:41:29"
+            "time": "2014-08-17 23:25:23"
         },
         {
             "name": "monolog/monolog",
@@ -1053,7 +1053,7 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "kisma/kisma": 0,
+        "kisma/kisma": 20,
         "symfony/console": 0,
         "phpunit/phpunit": 0,
         "phpunit/phpunit-selenium": 0,

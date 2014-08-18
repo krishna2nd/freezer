@@ -28,9 +28,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Freezes a path
  */
-class FreezeCommand extends Command
+class Path extends Command
 {
-
     protected function configure()
     {
         $_path = null;
