@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace DreamFactory\Tools\Freezer\Commands;
+namespace DreamFactory\Tools\Freezer\Commands\Freeze;
 
 use DreamFactory\Tools\Freezer\PathArchive;
 use Symfony\Component\Console\Command\Command;
@@ -28,7 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Freezes a path to a database
  */
-class Path extends Command
+class Db extends Command
 {
     protected function configure()
     {
@@ -42,10 +42,7 @@ class Path extends Command
             'password' => 'dsp_user',
         );
 
-        $this
-            ->setName( 'freeze:db' )
-            ->setDescription( 'Freezes a directory to the database.' )
-            ->setDefinition(
+        $this->setName( 'freeze:db' )->setDescription( 'Freezes a directory to the database.' )->setDefinition(
                 array(
                     new InputOption( 'path', 'a', InputOption::VALUE_REQUIRED, 'The path to freeze' ),
                     new InputOption( 'host', 's', InputOption::VALUE_OPTIONAL, 'The database host name', $_db['host'] ),
@@ -58,8 +55,7 @@ class Path extends Command
                         'password', 'p', InputOption::VALUE_OPTIONAL, 'The database password', $_db['password']
                     ),
                 )
-            )
-            ->setHelp(
+            )->setHelp(
                 <<<EOT
                 Freezes a directory to the database for later
 
@@ -94,13 +90,7 @@ EOT
         $_path = $input->getOption( 'path' );
         $output->writeln( '<header>Freezing: ' . $_path . '</header>' );
 
-        $_dsn =
-            'mysql:dbname=' .
-            $input->getOption( 'name' ) .
-            ';host=' .
-            $input->getOption( 'host' ) .
-            ';port=' .
-            $input->getOption( 'port' );
+        $_dsn = 'mysql:dbname=' . $input->getOption( 'name' ) . ';host=' . $input->getOption( 'host' ) . ';port=' . $input->getOption( 'port' );
 
         $_pdo = new \PDO( $_dsn, $input->getOption( 'username' ), $input->getOption( 'password' ) );
 

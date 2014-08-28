@@ -20,7 +20,8 @@ namespace DreamFactory\Tools\Freezer;
 
 use DreamFactory\Tools\Freezer\Commands\CleanCommand;
 use DreamFactory\Tools\Freezer\Commands\DefrostCommand;
-use DreamFactory\Tools\Freezer\Commands\FreezeCommand;
+use DreamFactory\Tools\Freezer\Commands\Freeze\Db;
+use DreamFactory\Tools\Freezer\Commands\Freeze\Path;
 use DreamFactory\Tools\Freezer\Commands\IcemakerCommand;
 use Symfony\Component\Console\Application;
 
@@ -56,7 +57,8 @@ class Freezer extends Application
 
         $this->add( new CleanCommand() );
         $this->add( new DefrostCommand() );
-        $this->add( new FreezeCommand() );
+        $this->add( new Db() );
+        $this->add( new Path() );
         $this->add( new IcemakerCommand() );
 //      $this->add( new DumpCommand() );
     }
