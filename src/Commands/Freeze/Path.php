@@ -20,6 +20,7 @@ namespace DreamFactory\Tools\Freezer\Commands\Freeze;
 
 use DreamFactory\Tools\Freezer\PathZipArchive;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,17 +36,32 @@ class Path extends Command
 
         $this->setName( 'freeze:path' )->setDescription( 'Freezes a directory to a zip file.' )->setDefinition(
             array(
-                new InputOption( 'path', 'p', InputOption::VALUE_REQUIRED, 'The path to freeze' ),
-                new InputOption( 'zip-file-name', 'z', InputOption::VALUE_OPTIONAL, 'The name of the created output file', 'frozen.zip' ),
-                new InputOption( 'local-name', 'l', InputOption::VALUE_OPTIONAL, 'The "local name" inside the zip file', null ),
+                new InputArgument( 'path', InputArgument::REQUIRED, 'The path to freeze' ),
+                new InputArgument( 'zip-file-name', InputArgument::OPTIONAL, 'The name of the created output file', 'frozen.zip' ),
+                new InputArgument(
+                    'local-path',
+                    InputArgument::OPTIONAL,
+                    'The local path of the files in the archive. If specified, the absolute path is written to each entry.',
+                    null
+                ),
+                new InputOption( 'checksum', 'c', InputOption::VALUE_NONE, 'If specified an MD5 checksum will be generated for the zip archive.' ),
             )
         )->setHelp(
             <<<EOT
-                Freezes a directory to the database for later
+The <info>freeze:path</info> command creates a zip file of the directory
+specified by the <comment>path</comment> argument. The name of the zip file
+may be specified by using the optional <comment>zip-file-name</comment> argument.
 
-Usage:
+If <comment>zip-file-name</comment> is not specified, the zip file name defaults
+to "frozen.zip".
 
-<info>freezer freeze -a /path/to/freeze <env></info>
+The <comment>local-path</comment> option allows you to add a prefix to the zipped
+paths and files. When this is not specified, the zip is made as if from the current
+directory (i.e. "./").
+
+
+<info>freezer freeze:path [-c|--checksum] path [zip-file-name] [local-path]</info>
+
 EOT
         );
     }
@@ -63,9 +79,10 @@ EOT
 //        $output->getFormatter()->setStyle( 'header', $_hs );
 
         //  Get started...
-        $_path = $input->getOption( 'path' );
-        $_zipFileName = $input->getOption( 'zip-file-name' );
-        $_localName = $input->getOption( 'local-name' );
+        $_path = $input->getArgument( 'path' );
+        $_zipFileName = $input->getArgument( 'zip-file-name' );
+        $_localName = $input->getArgument( 'local-path' );
+        $_checksum = $input->getOption( 'checksum' );
         $_zip = new PathZipArchive( $_zipFileName );
 
         $output->write( "\0337" );
@@ -73,8 +90,10 @@ EOT
         $output->write( "\0338" );
 
         $_start = microtime( true );
-        $_md5 = $_zip->backup( $_path, $_localName );
+        $_md5 = $_zip->backup( $_path, $_localName, $_checksum );
 
-        $output->writeln( 'Frozen in ' . sprintf( '%01.2f', microtime( true ) - $_start ) . 's, ' . $_zipFileName . ', md5: ' . $_md5 );
+        $output->writeln(
+            'Frozen in ' . sprintf( '%01.2f', microtime( true ) - $_start ) . 's, ' . $_zipFileName . ( $_checksum ? ', md5: ' . $_md5 : null )
+        );
     }
 }
