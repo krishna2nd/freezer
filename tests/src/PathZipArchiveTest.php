@@ -48,8 +48,7 @@ class PathZipArchiveTest extends \PHPUnit_Framework_TestCase
         $_testFile = $_root . static::$_testFile;
 
         $_zip = new PathZipArchive( $_testFile );
-        $_result = $_zip->backup( static::$_testPath );
-
+        $_result = $_zip->backup( static::$_testPath, null, true );
         $this->assertTrue( md5_file( $_testFile ) == $_result );
         $this->assertTrue( unlink( $_testFile ) );
     }
@@ -62,18 +61,39 @@ class PathZipArchiveTest extends \PHPUnit_Framework_TestCase
         $_root = dirname( __DIR__ );
         $_testFile = $_root . static::$_testFile;
 
+        //  With checksum
         $_zip = new PathZipArchive( $_testFile );
-        $_result = $_zip->backup( static::$_testPath );
+        $_checksum = $_zip->backup( static::$_testPath, null, true );
+        $this->assertTrue( md5_file( $_testFile ) == $_checksum );
+        $_zip = null;
 
-        $this->assertTrue( md5_file( $_testFile ) == $_result );
+        //  Without checksum
+        $_zip = new PathZipArchive( $_testFile );
+        $this->assertNull( $_zip->backup( static::$_testPath ) );
         $_zip = null;
 
         rename( static::$_testPath, static::$_testPath . '.save' );
 
+        //  Test valid checksum restore
         $_zip = new PathZipArchive( $_testFile );
-        $_zip->restore( static::$_testPath );
+        $_zip->restore( static::$_testPath, null, $_checksum );
         $_zip = null;
 
+        //  Test invalid checksum restore
+        $_zip = new PathZipArchive( $_testFile );
+
+        try
+        {
+            $_zip->restore( static::$_testPath, null, $_checksum . 's.are.the.bunk' );
+            $this->assertTrue( false, 'Restore should fail from invalid checksum error.' );
+        }
+        catch ( \InvalidArgumentException $_ex )
+        {
+            //  Expected
+        }
+
+        //  Cleanup
+        $_zip = null;
         $this->assertTrue( unlink( $_testFile ) );
         FileSystem::rmdir( static::$_testPath, true );
         rename( static::$_testPath . '.save', static::$_testPath );

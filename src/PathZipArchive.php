@@ -19,9 +19,7 @@
 namespace DreamFactory\Tools\Freezer;
 
 use DreamFactory\Tools\Freezer\Exceptions\FreezerException;
-use Kisma\Core\Enums\GlobFlags;
 use Kisma\Core\Exceptions\FileSystemException;
-use Kisma\Core\Utility\FileSystem;
 use Kisma\Core\Utility\Log;
 
 /**
@@ -29,15 +27,6 @@ use Kisma\Core\Utility\Log;
  */
 class PathZipArchive extends \ZipArchive
 {
-    //******************************************************************************
-    //* Constants
-    //******************************************************************************
-
-    /**
-     * @type string
-     */
-    const CHECKSUM_FILE_NAME = '.md5';
-
     //*************************************************************************
     //	Members
     //*************************************************************************
@@ -64,12 +53,13 @@ class PathZipArchive extends \ZipArchive
     /**
      * @param string $sourcePath
      * @param string $localName
+     * @param bool   $checksum If true, an MD5 checksum of the file will be returned
      *
-     * @return string The md5 checksum of the created file
-     * @throws Exceptions\FreezerException
-     * @throws \Kisma\Core\Exceptions\FileSystemException
+     * @throws FileSystemException
+     * @throws FreezerException
+     * @return string|null If $checksum is true, the MD5 checksum of the created zip is returned, otherwise null.
      */
-    public function backup( $sourcePath, $localName = null )
+    public function backup( $sourcePath, $localName = null, $checksum = false )
     {
         $_path = $this->_validatePath( $sourcePath );
 
@@ -81,7 +71,7 @@ class PathZipArchive extends \ZipArchive
             throw new FileSystemException( 'Error move zip file "' . $_zipName . '" to "' . $this->_zipFileName . '"' );
         }
 
-        return md5_file( $this->_zipFileName );
+        return $checksum ? md5_file( $this->_zipFileName ) : null;
     }
 
     /**
@@ -89,14 +79,21 @@ class PathZipArchive extends \ZipArchive
      *
      * @param string $targetPath The path in which to unzip the archive
      * @param string $localName  The local name of the directory
+     * @param string $checksum   An MD5 checksum to verify the backup file as valid
      *
-     * @return bool Only returns false if no backup exists, otherwise TRUE
+     * @throws FileSystemException
      * @throws \Exception
-     * @throws \Kisma\Core\Exceptions\FileSystemException
+     * @return bool Only returns false if no backup exists, otherwise TRUE
      */
-    public function restore( $targetPath, $localName = null )
+    public function restore( $targetPath, $localName = null, $checksum = null )
     {
         $_path = $this->_validatePath( $targetPath, true );
+
+        //  Checksum
+        if ( $checksum && $checksum != ( $_md5 = md5_file( $this->_zipFileName ) ) )
+        {
+            throw new \InvalidArgumentException( 'The provided checksum does not match the file checksum of "' . $_md5 . '".' );
+        }
 
         if ( true !== ( $_result = $this->open( $this->_zipFileName ) ) )
         {
@@ -123,62 +120,44 @@ class PathZipArchive extends \ZipArchive
      *
      * @param string $path
      * @param string $localName
-     * @param array  $excludedDirs Array of directorys to exclude, relative to source path
+     * @param array  $excludedDirs Array of directories to exclude, relative to source path. "." and ".." are automatically excluded.
      *
      * @return bool
      */
     protected function _addPath( $path, $localName = null, array $excludedDirs = array() )
     {
-        $_excluded = array(
-            ltrim( static::CHECKSUM_FILE_NAME, DIRECTORY_SEPARATOR ),
-        );
-
         $_excludedDirs = array_merge(
+            $excludedDirs,
             array(
-                '.private/app.store',
-                'swagger',
-            ),
-            $excludedDirs
+                '.',
+                '..',
+            )
         );
 
-        $_files = FileSystem::glob( $path . DIRECTORY_SEPARATOR . '*.*', GlobFlags::GLOB_NODOTS | GlobFlags::GLOB_RECURSE );
+        $_dd = \opendir( $path );
 
-        if ( empty( $_files ) )
+        while ( false !== ( $_file = \readdir( $_dd ) ) )
         {
-            return false;
-        }
-
-        //  Clean out the stuff we don't want in there...
-        foreach ( $_files as $_index => $_file )
-        {
-            foreach ( $_excludedDirs as $_mask )
+            if ( in_array( $_file, $_excludedDirs ) )
             {
-                if ( 0 === strpos( $_file, $_mask, 0 ) )
-                {
-                    unset( $_files[$_index] );
-                }
+                continue;
             }
 
-            if ( in_array( $_file, $_excluded ) && isset( $_files[$_index] ) )
-            {
-                unset( $_files[$_index] );
-            }
-        }
-
-        foreach ( $_files as $_file )
-        {
             $_filePath = $path . DIRECTORY_SEPARATOR . $_file;
-            $_localFilePath = ( $localName ? $localName . DIRECTORY_SEPARATOR . $_file : $_file );
+            $_localFilePath = ( $localName ? $localName . DIRECTORY_SEPARATOR . $_file : null );
 
-            if ( is_dir( $_filePath ) )
-            {
-                $this->addEmptyDir( $_file );
-            }
-            else
+            if ( is_file( $_filePath ) )
             {
                 $this->addFile( $_filePath, $_localFilePath );
             }
+            else if ( is_dir( $_filePath ) )
+            {
+                $this->addEmptyDir( $_file );
+                $this->_addPath( $_filePath, $_localFilePath, $excludedDirs );
+            }
         }
+
+        \closedir( $_dd );
 
         return true;
     }
