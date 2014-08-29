@@ -51,16 +51,22 @@ class Freezer extends Application
      *
      * @api
      */
-    public function __construct( $name = 'UNKNOWN', $version = 'UNKNOWN' )
+    public function __construct( $name = 'DreamFactory Freezer', $version = self::VERSION )
     {
-        parent::__construct( 'DreamFactory Freezer', static::VERSION );
+        parent::__construct( $name, $version );
+
+        //  Config
+        $this->add( new Commands\Config\Db() );
+        $this->add( new Commands\Config\Show() );
+
+        //  Freeze
+        $this->add( new Db() );
+        $this->add( new Path() );
+        $this->setDefaultCommand( 'help' );
 
         $this->add( new CleanCommand() );
         $this->add( new DefrostCommand() );
-        $this->add( new Db() );
-        $this->add( new Path() );
         $this->add( new IcemakerCommand() );
-//      $this->add( new DumpCommand() );
     }
 
 }

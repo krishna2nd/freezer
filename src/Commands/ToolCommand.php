@@ -39,6 +39,10 @@ class ToolCommand extends Command
      * @type OutputInterface
      */
     protected $_output;
+    /**
+     * @type float
+     */
+    protected $_startTime;
 
     //******************************************************************************
     //* Methods
@@ -60,18 +64,6 @@ class ToolCommand extends Command
                 call_user_func( array($this, 'set' . $_key), $_value );
             }
         }
-    }
-
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     */
-    protected function initialize( InputInterface $input, OutputInterface $output )
-    {
-        parent::initialize( $input, $output );
-
-        $this->_input = $input;
-        $this->_output = $output;
     }
 
     /**
@@ -102,19 +94,17 @@ class ToolCommand extends Command
     }
 
     /**
-     * Save cursor position
+     * Writes an escape sequence to the output.
+     *
+     * @param string $code   The code to output
+     * @param int    $value1 Optional row #
+     * @param int    $value2 Optional column #
+     *
+     * @throws \InvalidArgumentException When unknown output type is given
      */
-    public function savePos()
+    public function writeCode( $code, $value1 = 1, $value2 = 1 )
     {
-        $this->write( "\0337" );
-    }
-
-    /**
-     * Restore cursor position
-     */
-    public function restorePos()
-    {
-        $this->write( "\0338" );
+        $this->_output->write( AnsiCodes::render( $code, $value1, $value2 ) );
     }
 
     /**
@@ -124,9 +114,32 @@ class ToolCommand extends Command
      */
     public function writeInPlace( $message )
     {
-        $this->savePos();
+        $this->writeCode( AnsiCodes::SCP );
         $this->write( $message );
-        $this->restorePos();
+        $this->writeCode( AnsiCodes::RCP );
+    }
+
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     */
+    protected function initialize( InputInterface $input, OutputInterface $output )
+    {
+        parent::initialize( $input, $output );
+
+        $this->_input = $input;
+        $this->_output = $output;
+
+        //  Mark the start time of the command
+        $this->_startTime = microtime( true );
+    }
+
+    /**
+     * @return float The elapsed time since the start of execution
+     */
+    protected function _elapsed()
+    {
+        return microtime( true ) - $this->_startTime;
     }
 
     /**
@@ -144,5 +157,4 @@ class ToolCommand extends Command
     {
         return $this->_output;
     }
-
 }

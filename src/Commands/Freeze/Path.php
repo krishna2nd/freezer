@@ -88,11 +88,10 @@ EOT
 
         $this->writeInPlace( 'Freezing...' );
 
-        $_start = microtime( true );
         $_md5 = $_zip->backup( $_path, $_localName, $_checksum );
 
         $output->writeln(
-            'Frozen in ' . sprintf( '%01.4f', microtime( true ) - $_start ) . 's, ' . $_zipFileName . ( $_checksum ? ', md5: ' . $_md5 : null )
+            'Frozen in ' . sprintf( '%01.4f', $this->_elapsed() ) . 's, ' . $_zipFileName . ( $_checksum ? ', md5: ' . $_md5 : null )
         );
     }
 }
