@@ -30,7 +30,7 @@ The freezer takes a directory and creates an archive named by you. You may choos
 Basic usage:
 
 ```
-$ bin/freezer freeze[:[path|db]] [options] /path/to/archive /path/to/save/archive/file.[tar|tar.gz|gz|zip]
+$ bin/freezer freeze:[path|db] [options] /path/to/archive /path/to/save/archive/file.zip
 ```
 
 By default, the freezer's `freeze` command defaults to `path` mode. You may specify the `freeze:db` command to store the archive in the database instead. When using `freeze:db`, you must specify additional database credentials. They are:
