@@ -18,8 +18,8 @@
  */
 namespace DreamFactory\Tools\Freezer\Commands\Freeze;
 
+use DreamFactory\Tools\Freezer\Commands\ToolCommand;
 use DreamFactory\Tools\Freezer\PathZipArchive;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -28,14 +28,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Freezes a path
  */
-class Path extends Command
+class Path extends ToolCommand
 {
-    protected function configure()
+    /**
+     * @param string $name
+     * @param array  $config
+     */
+    public function __construct( $name = 'freeze:path', array $config = array() )
     {
-        $_path = null;
-
-        $this->setName( 'freeze:path' )->setDescription( 'Freezes a directory to a zip file.' )->setDefinition(
-            array(
+        $_config = array(
+            'description' => 'Freezes a directory to a zip file.',
+            'definition'  => array(
                 new InputArgument( 'path', InputArgument::REQUIRED, 'The path to freeze' ),
                 new InputArgument( 'zip-file-name', InputArgument::OPTIONAL, 'The name of the created output file', 'frozen.zip' ),
                 new InputArgument(
@@ -45,9 +48,8 @@ class Path extends Command
                     null
                 ),
                 new InputOption( 'checksum', 'c', InputOption::VALUE_NONE, 'If specified an MD5 checksum will be generated for the zip archive.' ),
-            )
-        )->setHelp(
-            <<<EOT
+            ),
+            'help'        => <<<EOT
 The <info>freeze:path</info> command creates a zip file of the directory
 specified by the <comment>path</comment> argument. The name of the zip file
 may be specified by using the optional <comment>zip-file-name</comment> argument.
@@ -64,6 +66,8 @@ directory (i.e. "./").
 
 EOT
         );
+
+        parent::__construct( $name, array_merge( $_config, $config ) );
     }
 
     /**
@@ -75,9 +79,6 @@ EOT
      */
     protected function execute( InputInterface $input, OutputInterface $output )
     {
-//        $_hs = new OutputFormatterStyle( 'white', 'green', array('bold') );
-//        $output->getFormatter()->setStyle( 'header', $_hs );
-
         //  Get started...
         $_path = $input->getArgument( 'path' );
         $_zipFileName = $input->getArgument( 'zip-file-name' );
@@ -85,9 +86,7 @@ EOT
         $_checksum = $input->getOption( 'checksum' );
         $_zip = new PathZipArchive( $_zipFileName );
 
-        $output->write( "\0337" );
-        $output->write( 'Freezing...' );
-        $output->write( "\0338" );
+        $this->writeInPlace( 'Freezing...' );
 
         $_start = microtime( true );
         $_md5 = $_zip->backup( $_path, $_localName, $_checksum );

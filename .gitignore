@@ -9,3 +9,5 @@ tests/*.log
 path.watcher.test.dir/
 build
 docs
+frozen.zip
+tests/frozen.zip
