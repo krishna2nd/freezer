@@ -16,11 +16,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace DreamFactory\Tools\Freezer\Commands;
+namespace DreamFactory\Tools\Freezer\Commands\Freeze;
 
-use DreamFactory\Tools\Freezer\PathArchive;
+use DreamFactory\Tools\Freezer\PathZipArchive;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -34,52 +33,48 @@ class Path extends Command
     {
         $_path = null;
 
-        $_db = array(
-            'host'     => 'localhost',
-            'port'     => 3306,
-            'name'     => 'dreamfactory',
-            'user'     => 'dsp_user',
-            'password' => 'dsp_user',
-        );
-
-        $this->setName( 'freeze' )
-            ->setDescription( 'Freezes a directory to the database.' )
-            ->setDefinition(
-                array(
-                    new InputOption( 'path', 'a', InputOption::VALUE_REQUIRED, 'The path to freeze' ),
-                    new InputOption( 'host', 's', InputOption::VALUE_OPTIONAL, 'The database host name', $_db['host'] ),
-                    new InputOption( 'port', null, InputOption::VALUE_OPTIONAL, 'The database port', $_db['port'] ),
-                    new InputOption( 'name', 'd', InputOption::VALUE_OPTIONAL, 'The database name', $_db['name'] ),
-                    new InputOption( 'user', 'u', InputOption::VALUE_OPTIONAL, 'The database user name', $_db['user'] ),
-                    new InputOption( 'password', 'p', InputOption::VALUE_OPTIONAL, 'The database password', $_db['password'] ),
-                )
+        $this->setName( 'freeze:path' )->setDescription( 'Freezes a directory to a zip file.' )->setDefinition(
+            array(
+                new InputOption( 'path', 'p', InputOption::VALUE_REQUIRED, 'The path to freeze' ),
+                new InputOption( 'zip-file-name', 'z', InputOption::VALUE_OPTIONAL, 'The name of the created output file', 'frozen.zip' ),
+                new InputOption( 'local-name', 'l', InputOption::VALUE_OPTIONAL, 'The "local name" inside the zip file', null ),
             )
-            ->setHelp(
-                <<<EOT
+        )->setHelp(
+            <<<EOT
                 Freezes a directory to the database for later
 
 Usage:
 
 <info>freezer freeze -a /path/to/freeze <env></info>
 EOT
-            );
+        );
     }
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int|null|void
+     * @throws \Exception
+     */
     protected function execute( InputInterface $input, OutputInterface $output )
     {
-        $header_style = new OutputFormatterStyle( 'white', 'green', array('bold') );
-        $output->getFormatter()->setStyle( 'header', $header_style );
+//        $_hs = new OutputFormatterStyle( 'white', 'green', array('bold') );
+//        $output->getFormatter()->setStyle( 'header', $_hs );
 
+        //  Get started...
         $_path = $input->getOption( 'path' );
+        $_zipFileName = $input->getOption( 'zip-file-name' );
+        $_localName = $input->getOption( 'local-name' );
+        $_zip = new PathZipArchive( $_zipFileName );
 
-        $output->writeln( '<header>Freezing: ' . $_path . '</header>' );
+        $output->write( "\0337" );
+        $output->write( 'Freezing...' );
+        $output->write( "\0338" );
 
-        $_dsn = 'mysql:dbname=dreamfactory;host=127.0.0.1';
-        $_pdo = new \PDO( $_dsn, 'dsp_user', 'dsp_user' );
+        $_start = microtime( true );
+        $_md5 = $_zip->backup( $_path, $_localName );
 
-        $_store = new PathArchive( 'freezer', $_pdo );
-        $_store->backup( 'freezer', $_path );
-
-        $output->writeln( '<header>Freezing complete</header>' );
+        $output->writeln( 'Frozen in ' . sprintf( '%01.2f', microtime( true ) - $_start ) . 's, ' . $_zipFileName . ', md5: ' . $_md5 );
     }
 }
