@@ -14,7 +14,7 @@
 	"require":           {
 		"php":             ">=5.4.6",
 		"kisma/kisma":     "~0.2@dev",
-		"symfony/console": "~2.4@stable"
+		"dreamfactory/console-tools": "*"
 	},
 	"minimum-stability": "dev",
 	"require-dev":       {
