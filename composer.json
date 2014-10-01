@@ -12,17 +12,13 @@
 		}
 	],
 	"require":           {
-		"php":             ">=5.4.6",
-		"kisma/kisma":     "~0.2@dev",
+		"php":             "~5.4",
+		"kisma/kisma":     "~0.2",
 		"dreamfactory/console-tools": "*"
 	},
 	"minimum-stability": "dev",
 	"require-dev":       {
-		"phpunit/phpunit":          "~3.7@stable",
-		"phpunit/phpunit-selenium": "@stable",
-		"phpunit/phpunit-story":    "@stable",
-		"phpunit/dbunit":           "@stable",
-		"phpunit/php-invoker":      "@stable"
+		"phpunit/phpunit":          "~3.7"
 	},
 	"autoload":          {
 		"psr-4": {
