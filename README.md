@@ -1,9 +1,9 @@
-# The Freezer
+## The Freezer
+[![Latest Stable Version](https://poser.pugx.org/dreamfactory/freezer/v/stable.svg)](https://packagist.org/packages/dreamfactory/freezer) [![Total Downloads](https://poser.pugx.org/dreamfactory/freezer/downloads.svg)](https://packagist.org/packages/dreamfactory/freezer) [![Latest Unstable Version](https://poser.pugx.org/dreamfactory/freezer/v/unstable.svg)](https://packagist.org/packages/dreamfactory/freezer) [![License](https://poser.pugx.org/dreamfactory/freezer/license.svg)](https://packagist.org/packages/dreamfactory/freezer)
 
 Simple directory backup and restore utility.
 
 ## Installation
-
 Add a line to your "require" section in your composer configuration:
 
 ```
@@ -26,7 +26,6 @@ The utility is called **freezer** and is located at `bin/freezer` of this repo.
 The freezer takes a directory and creates an archive named by you. You may choose to compress with tar, zip, or gzip. You may also have freezer store the archive in a database of your choosing.
 
 ### Command Line
-
 Basic usage:
 
 ```
@@ -55,7 +54,7 @@ The following options are available for all freeze/defrost commands:
 | -q | --quiet | Only display errors | N/A |
 | -v | --verbose | Be more chatty | N/A |
 
-#### Examples
+## Examples
 
 To create a Freezer archive file:
 
